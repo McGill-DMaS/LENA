@@ -1,0 +1,9 @@
+[db]
+url = 'sqlite:///lena/data/database.db'
+
+
+[llama]
+input_length = 1024
+mask_ratio = 0.5
+mask_token = '<mask>'
+data_aug_coef = 1

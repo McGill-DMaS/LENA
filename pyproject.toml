@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "lena"
+version = "0.1.0"
+description = ""
+authors = ["Mohammadhossein Amouei <mohammadhossein.amouei@mail.mcgill.ca>"]
+readme = "README.md"
+include = ["config.toml"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "^1.26.4"
+toml = "^0.10.2"
+tqdm = "^4.66.4"
+wandb = "^0.17.4"
+transformers = "^4.42.3"
+bitsandbytes = "^0.43.1"
+trl = "^0.9.4"
+peft = "^0.11.1"
+accelerate = "^0.32.1"
+datasets = "^2.20.0"
+torch = { version = "2.3.1", source="torch"}
+torchaudio = { version = "2.3.1", source="torch"}
+torchvision = { version = "0.18.1", source="torch"}
+scikit-learn = "^1.5.1"
+matplotlib = "^3.9.1"
+networkx = "3.2.1"
+torch-geometric = "^2.5.3"
+umap-learn = "^0.5.6"
+local-attention = "^1.9.15"
+seaborn = "^0.13.2"
+coloredlogs = "^15.0.1"
+torchtune = "^0.4.0"
+torchao = "^0.6.1"
+torchmetrics = "^1.6.1"
+sqlalchemy = "^2.0.38"
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cu121"
+priority = 'explicit'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
