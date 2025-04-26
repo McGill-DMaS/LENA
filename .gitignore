@@ -1,7 +1,8 @@
 # Ignore the virtual environment
 .venv/
 .vscode/
-lena/checkpoints/
+lena/checkpoints/pooler
+lena/checkpoints/llama
 lena/data/
 __pycache__/
 *.pyc
