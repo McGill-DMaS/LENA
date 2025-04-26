@@ -16,17 +16,21 @@ cd LENA
 ### 2. Install Poetry
 
 If you don't have Poetry installed, follow the instructions at [python-poetry.org](https://python-poetry.org/) or run:
+`pipx` allows you to install and run Python applications in isolated environments.
+
+To install `pipx`, run the following command:
 
 ```bash
-curl -sSL https://install.python-poetry.org | python3 -
+python -m pip install --user pipx
+python -m pipx ensurepath
 ```
 
-Ensure that `poetry` is in your `PATH`:
+Once installed, you may need to restart your shell or terminal for the `pipx` command to be available.
 
+Then install Poetry:
 ```bash
-export PATH="$HOME/.local/bin:$PATH"
+pipx install poetry
 ```
-
 ### 3. Install Project Dependencies
 
 Use Poetry to install all dependencies and enter the virtual environment:
@@ -66,7 +70,7 @@ https://drive.google.com/file/d/1bCAv0kkl8CyjklG5nS4A0w-MYvU0fQm9/view?usp=shari
 Run the script to generate the embeddings database from your training set:
 
 ```bash
-bash build_database.sh
+./build_database.sh
 ```
 
 This will create (or update) the local database used for similarity search.
@@ -76,7 +80,7 @@ This will create (or update) the local database used for similarity search.
 To compute embeddings on the test set and perform retrieval:
 
 ```bash
-bash inference.sh
+./inference.sh
 ```
 
 Results will be saved in the `results/` directory by default.
@@ -86,12 +90,8 @@ Results will be saved in the `results/` directory by default.
 If you wish to train the pooler network from scratch on your data:
 
 ```bash
-bash finetune.sh
+./finetune.sh
 ```
 
 This will run a training loop and save checkpoints under `checkpoints/pooler/`.
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
