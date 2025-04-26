@@ -145,38 +145,6 @@ def write_functions(session, mode, data):
     logging.info("All functions and records inserted successfully.")
 
 
-'''def write_llama_dataset(session):
-    """
-    Create LlamaPairs records by pairing functions from the same group (grouped by
-    program, name, and compiler) where the input is a function with optimization 'O2'
-    and the target is the function with optimization 'O0'.
-
-    Args:
-        session (Session): The SQLAlchemy session used for database operations.
-    """
-    functions = session.query(Function).filter(
-        Function.optimization.in_(["O2", "O0"])
-    ).all()
-
-    groups = defaultdict(list)
-    for func in functions:
-        key = (func.program, func.name, func.compiler)
-        groups[key].append(func)
-
-    for key, funcs in groups.items():
-        input_func = next((f for f in funcs if f.optimization == "O2"), None)
-        target_func = next((f for f in funcs if f.optimization == "O0"), None)
-        if input_func and target_func:
-            pair = LlamaPairs(input_id=input_func.id, target_id=target_func.id)
-            session.add(pair)
-            logging.info(
-                f"Created LlamaPair for group {key}: input_id={input_func.id} (O2), target_id={target_func.id} (O0)"
-            )
-
-    session.commit()
-    logging.info("Llama dataset created successfully.")'''
-
-
 def write_pool_pairs(session):
     """
     Create PoolPairs records by:
@@ -245,13 +213,9 @@ if __name__ == '__main__':
     engine = create_engine(config['db']['url'], echo=False)
     inspector = inspect(engine)
 
-    # List of (table_name, model_class) tuples
     tables = [
         ('function', Function),
-        #('llama_pairs', LlamaPairs),
-        ('llama_embeddings', LlamaEmbeddings),
         ('pool_pairs', PoolPairs),
-        ('embeddings', Embeddings),
         ('train', Train),
         ('test', Test),
         ('validation', Validation)
@@ -286,9 +250,6 @@ if __name__ == '__main__':
         if len(data) > 0:
             logging.info('Writing test data to db...')
             write_functions(session, 'test', data)
-
-        '''logging.info('Creating Llama dataset...')
-        write_llama_dataset(session)'''
 
         logging.info('Generating Pooler Pairs...')
         write_pool_pairs(session)

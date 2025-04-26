@@ -51,7 +51,10 @@ class LenaDataset(Dataset):
             function = record.function
             prompt = self.createPrompt(function.src)
             tokens.append(prompt)
-            detail.append(function.id)
+            if type == 'test':
+                detail.append([function.id, function.name, function.program, function.compiler, function.optimization])
+            else:
+                detail.append(function.id)
         
         logging.info('Tokenizing...')
 
