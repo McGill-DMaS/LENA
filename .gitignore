@@ -1,8 +1,6 @@
 # Ignore the virtual environment
 .venv/
 .vscode/
-lena/checkpoints/
-lena/data/
 __pycache__/
 *.pyc
 *.log
