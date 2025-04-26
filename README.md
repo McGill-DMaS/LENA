@@ -87,7 +87,7 @@ Results will be saved in `data/inference_dict.pt` by default.
 If you wish to train the pooler network from scratch on your data:
 
 ```bash
-./finetune.sh
+./train_pooler.sh
 ```
 
 This will run a training loop and save checkpoints under `checkpoints/pooler/`.
