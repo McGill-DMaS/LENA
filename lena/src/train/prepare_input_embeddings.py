@@ -1,9 +1,8 @@
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline, BitsAndBytesConfig
+from transformers import AutoModelForCausalLM, pipeline, BitsAndBytesConfig
 
-from datasets import load_dataset
 import warnings
 from tqdm import tqdm
 from torch.utils.data import DataLoader
@@ -15,8 +14,7 @@ from ..lena_dataset import LenaDataset
 from ..data_utils.db_models import *
 import queue
 import numpy as np
-import threading
-import ast
+
 import logging
 logging.basicConfig(
     level=logging.INFO,
