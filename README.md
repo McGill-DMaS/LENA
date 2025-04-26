@@ -80,7 +80,7 @@ To compute embeddings on the test set and perform retrieval:
 ./inference.sh
 ```
 
-Results will be saved in the `results/` directory by default.
+Results will be saved in `data/inference_dict.pt` by default.
 
 ## 🛠️ Train the Pooler (Optional)
 
