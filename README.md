@@ -16,9 +16,6 @@ cd LENA
 ### 2. Install Poetry
 
 If you don't have Poetry installed, follow the instructions at [python-poetry.org](https://python-poetry.org/) or run:
-`pipx` allows you to install and run Python applications in isolated environments.
-
-To install `pipx`, run the following command:
 
 ```bash
 python -m pip install --user pipx
