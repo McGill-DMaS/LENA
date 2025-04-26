@@ -59,20 +59,7 @@ Each subdirectory should contain the binary functions (or their representations)
 
 Download our pretrained model archive from Google Drive and extract it into the `checkpoints/` directory:
 
-```bash
-# Install gdown if you don't have it
-pip install gdown
-
-# Create the checkpoints directory if it doesn't exist
-mkdir -p checkpoints
-
-# Download the model archive from Google Drive
-MODEL_ID=1bCAv0kkl8CyjklG5nS4A0w-MYvU0fQm9
-gdown https://drive.google.com/uc?id=$MODEL_ID -O checkpoints/pretrained.tar.gz
-
-# Extract the archive
-tar -xzvf checkpoints/pretrained.tar.gz -C checkpoints
-```
+https://drive.google.com/file/d/1bCAv0kkl8CyjklG5nS4A0w-MYvU0fQm9/view?usp=sharing
 
 ## 🔨 Build the Database
 
