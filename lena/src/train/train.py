@@ -3,7 +3,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-from torch.optim.lr_scheduler import LambdaLR
+from torch.optim.lr_scheduler import CosineAnnealingLR
 from ..pooler_dataset import PoolerDataset
 from torch.utils.data import DataLoader
 from ..config_loader import config
@@ -40,9 +40,12 @@ def main():
     device = "cuda:0"
     scaler = GradScaler()
 
-    sim_coeff = 25.0
-    cov_coeff = 5.0
-    epochs = 1000
+    lr = 2e-5
+    std_coeff = 5.0
+    cov_coeff = 1.0
+    alpha = 0.6
+    
+    epochs = 50
     report_steps = 20
   
     dataset = PoolerDataset(type='train')
@@ -55,9 +58,25 @@ def main():
     
     total = len(dataset)
 
-    def VICRegLoss(x, y, std_coeff, num_features = 4096):
+    def info_nce_loss(x: torch.Tensor,
+                  y: torch.Tensor,
+                  temperature: float = 0.07) -> torch.Tensor:
 
-        repr_loss = F.mse_loss(x, y)
+        x = F.normalize(x, p=2, dim=1)   
+        y = F.normalize(y, p=2, dim=1)  
+
+        logits = x @ y.t() 
+        logits = logits / temperature
+
+        batch_size = x.shape[0]
+        targets = torch.arange(batch_size, device=x.device)
+
+        loss_xy = F.cross_entropy(logits, targets)
+        loss_yx = F.cross_entropy(logits.t(), targets)
+
+        return 0.5 * (loss_xy + loss_yx)
+
+    def VICRegLoss(x, y, std_coeff, num_features = 4096):
 
         x = x - x.mean(dim=0)
         y = y - y.mean(dim=0)
@@ -72,24 +91,25 @@ def main():
             num_features
         ) + off_diagonal(cov_y).pow_(2).sum().div(num_features)
 
-        loss = (
-            sim_coeff * repr_loss
-            + std_coeff * std_loss
+        loss = (std_coeff * std_loss
             + cov_coeff * cov_loss
         )
-        return loss
+        return loss, std_loss, cov_loss
     
-    optimizer = optim.AdamW(model.parameters(), lr=1e-5)
-
-    scheduler = LambdaLR(optimizer, lr_lambda)
+    optimizer = optim.AdamW(model.parameters(), lr=lr)
 
     model.train()
-    std_coeff = 24.5
     best_val_loss = math.inf
     logging.info('Running dataloader...')
     dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn, shuffle=True, num_workers=3, prefetch_factor=2)
     validation_dataloader = DataLoader(valid_dataset, batch_size=batch_size, collate_fn=collate_fn, shuffle=True, num_workers=3, prefetch_factor=2)
     logging.info('Dataloader is ready.')
+
+    scheduler = CosineAnnealingLR(
+        optimizer,
+        eta_min=1e-10,
+        T_max=epochs * len(dataloader)
+    )
 
     for epoch in range(epochs):
         
