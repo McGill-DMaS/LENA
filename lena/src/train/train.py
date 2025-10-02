@@ -41,7 +41,7 @@ def main():
     alpha = 0.6
     
     epochs = 50
-    report_steps = 20
+    report_steps = 100
   
     dataset = PoolerDataset(type='train')
     valid_dataset = PoolerDataset(type='validation')
