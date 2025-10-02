@@ -80,10 +80,8 @@ def main():
             squared_diff = (masked_embeddings - mean_embeddings.unsqueeze(1)) ** 2
             variance_embeddings = (squared_diff * attention_mask.unsqueeze(-1)).sum(dim=1) / (count_non_padding  + 1e-6)
             std_embeddings = torch.sqrt(variance_embeddings + 1e-6)
-
             indices = attention_mask.sum(dim=1) - 1
-            LastToken_embedding = raw_embeddings[torch.arange(raw_embeddings.size()[0]),indices,:]
-            combined_embeddings = torch.cat((LastToken_embedding, mean_embeddings, std_embeddings), dim=1)
+            combined_embeddings = torch.cat((mean_embeddings, std_embeddings), dim=1)
             combined_embeddings = combined_embeddings.detach().cpu()
 
             return combined_embeddings
