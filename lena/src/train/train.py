@@ -30,11 +30,6 @@ def off_diagonal(x):
     assert n == m
     return x.flatten()[:-1].view(n - 1, n + 1)[:, 1:].flatten()
 
-def lr_lambda(step):
-    warmup_steps = 10
-    if step < warmup_steps:
-        return step / warmup_steps
-    return 0.5 * (1 + torch.cos((step - warmup_steps) / ((3169*15/4) - warmup_steps) * torch.tensor(3.141592653589793)))
 
 def main():
     device = "cuda:0"
@@ -54,11 +49,11 @@ def main():
     model = Pooler()
     model.to(device)
     
-    batch_size = 1024
+    batch_size = 512
     
     total = len(dataset)
 
-    def info_nce_loss(x: torch.Tensor,
+    def nt_xent_loss(x: torch.Tensor,
                   y: torch.Tensor,
                   temperature: float = 0.07) -> torch.Tensor:
 
@@ -96,7 +91,7 @@ def main():
         )
         return loss, std_loss, cov_loss
     
-    optimizer = optim.AdamW(model.parameters(), lr=lr)
+    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=0.1, fused=True)
 
     model.train()
     best_val_loss = math.inf
@@ -113,8 +108,6 @@ def main():
 
     for epoch in range(epochs):
         
-        std_coeff += 0.10
-        
         for i , (view1, view2) in enumerate(dataloader):
             optimizer.zero_grad()
 
@@ -122,7 +115,9 @@ def main():
                 z1 = model(view1.to(device))
                 z2 = model(view2.to(device))
 
-                loss = VICRegLoss(z1, z2, std_coeff, num_features = 4096)
+                loss_vic, _, _ = VICRegLoss(z1, z2, std_coeff, num_features = 4096)
+                loss_nt_xent = nt_xent_loss(z1, z2, temperature=0.07)
+                loss = alpha * loss_nt_xent + (1 - alpha) * loss_vic
 
             scaler.scale(loss).backward() 
             scaler.step(optimizer)
@@ -137,7 +132,9 @@ def main():
                         with autocast(device_type='cuda'):
                             z1 = model(view1.to(device))
                             z2 = model(view2.to(device))
-                            validation_loss = VICRegLoss(z1, z2, 25, num_features = 4096)
+                            val_loss_vic, _, _ = VICRegLoss(z1, z2, std_coeff, num_features = 4096)
+                            val_loss_nt_xent = nt_xent_loss(z1, z2, temperature=0.07)
+                            validation_loss = alpha * val_loss_nt_xent + (1 - alpha) * val_loss_vic
                         
                         valid_loss.append(validation_loss.item())
 
