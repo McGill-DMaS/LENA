@@ -89,10 +89,8 @@ def main():
             squared_diff = (masked_embeddings - mean_embeddings.unsqueeze(1)) ** 2
             variance_embeddings = (squared_diff * data['attention_mask'].unsqueeze(-1)).sum(dim=1) / (count_non_padding  + 1e-6)
             std_embeddings = torch.sqrt(variance_embeddings + 1e-6)
-
             indices = data['attention_mask'].sum(dim=1) - 1
-            LastToken_embedding = raw_embeddings[torch.arange(raw_embeddings.size()[0]),indices,:]
-            combined_embeddings = torch.nan_to_num(torch.cat((LastToken_embedding, mean_embeddings, std_embeddings), dim=1).squeeze().half(), nan=0.0, posinf=0.0, neginf=0.0)
+            combined_embeddings = torch.nan_to_num(torch.cat((mean_embeddings, std_embeddings), dim=1).squeeze().half(), nan=0.0, posinf=0.0, neginf=0.0)
             embeddings = pooler(combined_embeddings.to(f'cuda:{device_id}'))
 
         for j in range(embeddings.shape[0]):
