@@ -60,7 +60,7 @@ Each subdirectory should contain the binary functions (or their representations)
 
 Download our pretrained model archive from Google Drive and extract it into the `checkpoints/` directory:
 
-https://drive.google.com/file/d/1bCAv0kkl8CyjklG5nS4A0w-MYvU0fQm9/view?usp=sharing
+[https://drive.google.com/file/d/1bCAv0kkl8CyjklG5nS4A0w-MYvU0fQm9/view?usp=sharing](https://drive.google.com/file/d/1JiSo4riGxEI01JMBSDJBuQ_590FGYQ1S/view?usp=sharing)
 
 ## 🔨 Build the Database
 
