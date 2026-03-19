@@ -49,7 +49,7 @@ def main():
     logging.info('Preparing input embeddings (this takes time)...')
 
     llama, _ = FastLanguageModel.from_pretrained(
-        finetuned_model_dir,
+        model_name=finetuned_model_dir,
         dtype=torch.bfloat16,
         load_in_4bit=False,
         device_map={"":0}
