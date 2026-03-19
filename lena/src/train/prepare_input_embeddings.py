@@ -22,8 +22,8 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
-size = "3B"
-finetuned_model_dir="lena/checkpoints/llama"
+
+finetuned_model_dir=f"lena/checkpoints/{config['lena']['size']}/llama"
 q = queue.Queue()
 
 
