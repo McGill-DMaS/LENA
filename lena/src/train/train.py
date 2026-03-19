@@ -46,7 +46,7 @@ def main():
     dataset = PoolerDataset(type='train')
     valid_dataset = PoolerDataset(type='validation')
 
-    model = Pooler()
+    model = Pooler(dim=config['llama'][f"dim_{config['lena']['size']}"])
     model.to(device)
     
     batch_size = 512
@@ -141,7 +141,7 @@ def main():
                 avg_loss = np.mean(valid_loss)
 
                 if avg_loss <= best_val_loss:
-                    save_path = 'lena/checkpoints/pooler/'
+                    save_path = f'lena/checkpoints/{config['lena']['size']}/pooler/'
 
                     if not os.path.exists(save_path):
                         os.makedirs(save_path)
