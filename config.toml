@@ -1,6 +1,8 @@
 [db]
 url = 'sqlite:///lena/data/database.db'
 
+[lena]
+size = '3B'
 
 [llama]
 input_length = 1024
