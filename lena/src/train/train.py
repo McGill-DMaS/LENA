@@ -23,7 +23,7 @@ logging.basicConfig(
 def collate_fn(batch):
     view1 = torch.stack([item[0] for item in batch])
     view2 = torch.stack([item[1] for item in batch])
-    return torch.nan_to_num(view1, nan=0.0, posinf=0.0, neginf=0.0), torch.nan_to_num(view2, nan=0.0, posinf=0.0, neginf=0.0)
+    return view1,view2
 
 def off_diagonal(x):
     n, m = x.shape
