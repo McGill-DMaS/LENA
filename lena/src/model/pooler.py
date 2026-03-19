@@ -3,18 +3,18 @@ import torch.nn.functional as F
 
 
 class Pooler(nn.Module):
-    def __init__(self):
+    def __init__(self, dim):
         super(Lena, self).__init__()
 
         self.projection = nn.Sequential(
-            nn.Linear(2 * 4096, 2 * 4096),
+            nn.Linear(2 * dim, 2 * dim),
             nn.ELU(),
-            nn.Linear(2 * 4096, 4096),
+            nn.Linear(2 * dim, dim),
             nn.ELU(),
-            nn.Linear(4096, 4096),
-            nn.BatchNorm1d(4096),
+            nn.Linear(dim, dim),
+            nn.BatchNorm1d(dim),
             nn.ELU(),
-            nn.Linear(4096, 4096, bias=False)
+            nn.Linear(dim, dim, bias=False)
         )
 
         self._initialize_weights()
