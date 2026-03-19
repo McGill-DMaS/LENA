@@ -53,7 +53,7 @@ def main():
     device_id = 0
 
     llama, _ = FastLanguageModel.from_pretrained(
-        finetuned_model_dir,
+        model_name=finetuned_model_dir,
         torch_dtype=torch.bfloat16,
         load_in_4bit=False,
         device_map={"":device_id}
