@@ -62,7 +62,7 @@ def main():
     llama.eval()
     pooler = Pooler(dim=llama.config.hidden_size)
     # pooler = pooler.half()
-    pooler.load_state_dict(torch.load('lena/checkpoints/{size}/pooler/model.pth',
+    pooler.load_state_dict(torch.load(f'lena/checkpoints/{size}/pooler/model.pth',
         map_location=torch.device('cuda:0')), strict=False)
     llama.eval()
     pooler.to(f'cuda:{device_id}')
