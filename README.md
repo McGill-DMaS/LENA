@@ -58,9 +58,13 @@ Each subdirectory should contain the binary functions (or their representations)
 
 ## 📥 Download Pretrained Models
 
-Download our pretrained model archive from Google Drive and extract it into the `checkpoints/` directory:
+Download our pretrained models from Hugging Face repo and save it in the `checkpoints/` directory:
 
-[https://drive.google.com/file/d/1bCAv0kkl8CyjklG5nS4A0w-MYvU0fQm9/view?usp=sharing](https://drive.google.com/file/d/1JiSo4riGxEI01JMBSDJBuQ_590FGYQ1S/view?usp=sharing)
+[LENA-1B](https://huggingface.co/mhosseina96/LENA-1B/tree/main)
+
+[LENA-3B](https://huggingface.co/mhosseina96/LENA-3B/tree/main)
+
+
 
 ## 🔨 Build the Database
 
