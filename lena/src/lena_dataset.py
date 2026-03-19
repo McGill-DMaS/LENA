@@ -26,11 +26,10 @@ class LenaDataset(Dataset):
 
     def createPrompt(self, func):
     
-        bos_token = '<s>'
-        system_prompt = f"[INST] The O0 form of \n"
-        input_prompt = f" {func} is [/INST]" 
+        bos_token = '<|begin_of_text|>'
+        input_prompt = f"{bos_token}The O0 form of {func}" 
         
-        return bos_token + system_prompt + input_prompt
+        return f"<|start_header_id|>user<|end_header_id|>\n\n{input_prompt} <|start_header_id|>assistant<|end_header_id|>\n\n"
     
     def load_data(self, type):
         tokens, detail = [], []
