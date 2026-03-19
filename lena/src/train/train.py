@@ -36,8 +36,8 @@ def main():
     scaler = GradScaler()
 
     lr = 2e-5
-    std_coeff = 5.0
-    cov_coeff = 1.0
+    std_coeff = 10.0
+    cov_coeff = 5.0
     alpha = 0.6
     
     epochs = 50
@@ -115,7 +115,7 @@ def main():
                 z1 = model(view1.to(device))
                 z2 = model(view2.to(device))
 
-                loss_vic, _, _ = VICRegLoss(z1, z2, std_coeff, num_features = 4096)
+                loss_vic, _, _ = VICRegLoss(z1, z2, std_coeff, num_features = config['lena']['size'])
                 loss_nt_xent = nt_xent_loss(z1, z2, temperature=0.07)
                 loss = alpha * loss_nt_xent + (1 - alpha) * loss_vic
 
