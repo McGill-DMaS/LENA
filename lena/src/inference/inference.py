@@ -60,7 +60,7 @@ def main():
     )
 
     llama.eval()
-    pooler = Pooler()
+    pooler = Pooler(dim=llama.config.hidden_size)
     # pooler = pooler.half()
     pooler.load_state_dict(torch.load('lena/checkpoints/pooler/model.pth',
         map_location=torch.device('cuda:0')), strict=False)
