@@ -1,7 +1,7 @@
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline, BitsAndBytesConfig
+from unsloth import FastLanguageModel
 
 from datasets import load_dataset
 import warnings
@@ -14,6 +14,7 @@ from ..config_loader import config
 from ..lena_dataset import LenaDataset
 from ..data_utils.db_models import *
 from ..model.pooler import Pooler
+from torch.amp import autocast
 import queue
 import numpy as np
 import threading
@@ -50,21 +51,17 @@ warnings.filterwarnings("ignore")
 def main():
     logging.info('Generating embeddings (this takes time)...')
     device_id = 0
-    bnb_config = BitsAndBytesConfig(
-        load_in_8bit=True
-    )
 
-    llama = AutoModelForCausalLM.from_pretrained(
+    llama, _ = FastLanguageModel.from_pretrained(
         finetuned_model_dir,
-        low_cpu_mem_usage=True,
-        torch_dtype=torch.float16,
-        quantization_config=bnb_config,
+        torch_dtype=torch.bfloat16,
+        load_in_4bit=False,
         device_map={"":device_id}
     )
 
     llama.eval()
     pooler = Pooler()
-    pooler = pooler.half()
+    # pooler = pooler.half()
     pooler.load_state_dict(torch.load('lena/checkpoints/pooler/model.pth',
         map_location=torch.device('cuda:0')), strict=False)
     llama.eval()
@@ -80,8 +77,8 @@ def main():
     for i , (data, details) in enumerate(tqdm(test_loader)):
         with torch.no_grad():
             torch.cuda.synchronize()
-            raw_embeddings = llama(data['input_ids'], attention_mask=data['attention_mask'], output_hidden_states=True, return_dict=True).hidden_states[-1]
-            raw_embeddings = raw_embeddings.to(torch.float16)
+            raw_embeddings = llama(data['input_ids'], attention_mask=data['attention_mask'], return_dict=True).last_hidden_state
+            # raw_embeddings = raw_embeddings.to(torch.float16)
             masked_embeddings = raw_embeddings * data['attention_mask'].unsqueeze(-1)
             sum_embeddings = masked_embeddings.sum(dim=1)
             count_non_padding = data['attention_mask'].sum(dim=1).unsqueeze(-1)
@@ -90,8 +87,9 @@ def main():
             variance_embeddings = (squared_diff * data['attention_mask'].unsqueeze(-1)).sum(dim=1) / (count_non_padding  + 1e-6)
             std_embeddings = torch.sqrt(variance_embeddings + 1e-6)
             indices = data['attention_mask'].sum(dim=1) - 1
-            combined_embeddings = torch.nan_to_num(torch.cat((mean_embeddings, std_embeddings), dim=1).squeeze().half(), nan=0.0, posinf=0.0, neginf=0.0)
-            embeddings = pooler(combined_embeddings.to(f'cuda:{device_id}'))
+            combined_embeddings = torch.cat((mean_embeddings, std_embeddings), dim=1)
+            with autocast(device_type='cuda', dtype=torch.bfloat16):
+                embeddings = pooler(combined_embeddings.to(f'cuda:{device_id}'))
 
         for j in range(embeddings.shape[0]):
             inference_dict[details[j][0]] = {'name':details[j][1],'program':details[j][2],'compiler':details[j][3], 'optimization':details[j][4], 'embedding': embeddings[j].cpu()}
