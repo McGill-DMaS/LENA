@@ -8,37 +8,49 @@ include = ["config.toml"]
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.9"
-numpy = "^1.26.4"
-toml = "^0.10.2"
-tqdm = "^4.66.4"
-wandb = "^0.17.4"
-transformers = "^4.42.3"
-bitsandbytes = "^0.43.1"
-trl = "^0.9.4"
-peft = "^0.11.1"
-accelerate = "^0.32.1"
-datasets = "^2.20.0"
-torch = { version = "2.3.1", source="torch"}
-torchaudio = { version = "2.3.1", source="torch"}
-torchvision = { version = "0.18.1", source="torch"}
-scikit-learn = "^1.5.1"
-matplotlib = "^3.9.1"
-networkx = "3.2.1"
-torch-geometric = "^2.5.3"
-umap-learn = "^0.5.6"
-local-attention = "^1.9.15"
-seaborn = "^0.13.2"
-coloredlogs = "^15.0.1"
-torchtune = "^0.4.0"
-torchao = "^0.6.1"
-torchmetrics = "^1.6.1"
-sqlalchemy = "^2.0.38"
+python = ">=3.12,<3.14"
+torch = {version = "^2.9.0", source = "pytorch"}
+torchvision = {version = "^0.24.0", source = "pytorch"}
+transformers = "^4.57.1"
+tokenizers = "^0.22.1"
+datasets = "^4.2.0"
+accelerate = "^1.11.0"
+evaluate = "^0.4.6"
+safetensors = "^0.6.2"
+huggingface-hub = "^0.35.3"
+tqdm = "^4.67.1"
+numpy = "^2.3.4"
+pyyaml = "^6.0.3"
+pyelftools = "^0.32"
+pyghidra = "^2.2.0"
+matplotlib = "^3.10.7"
+sentencepiece = "^0.2.1"
+protobuf = "^6.33.0"
+peft = "^0.18.0"
+bitsandbytes = "^0.49.0"
+zstandard = "^0.25.0"
+filelock = "^3.20.0"
+wandb = "^0.22.3"
+torchrun = "^0.2.9"
+simple-parsing = "^0.1.7"
+xformers = "^0.0.33.post1"
+tensorboard = "^2.20.0"
+tensorboard-plugin-profile = "^2.21.1"
+lion-pytorch = "^0.2.3"
+mistral-inference = "^1.6.0"
+torchview = "^0.2.7"
+graphviz = "^0.21"
+packaging = "^25.0"
+ninja = "^1.13.0"
+trl = "^0.24.0"
+scikit-learn = "^1.8.0"
+unsloth = "^2026.1.2"
+weave = "^0.52.23"
 
 [[tool.poetry.source]]
-name = "torch"
-url = "https://download.pytorch.org/whl/cu121"
-priority = 'explicit'
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu130"
+priority = "explicit"
 
 [build-system]
 requires = ["poetry-core"]
