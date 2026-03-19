@@ -25,8 +25,8 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
-size="3B"
-finetuned_model_dir=f"lena/checkpoints/{size}/llama"
+
+finetuned_model_dir=f"lena/checkpoints/{config['lena']['size']}/llama"
 q = queue.Queue()
 
 
@@ -62,7 +62,7 @@ def main():
     llama.eval()
     pooler = Pooler(dim=llama.config.hidden_size)
     # pooler = pooler.half()
-    pooler.load_state_dict(torch.load(f'lena/checkpoints/{size}/pooler/model.pth',
+    pooler.load_state_dict(torch.load(f'lena/checkpoints/{config['lena']['size']}/pooler/model.pth',
         map_location=torch.device('cuda:0')), strict=False)
     llama.eval()
     pooler.to(f'cuda:{device_id}')
