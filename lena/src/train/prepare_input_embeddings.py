@@ -1,7 +1,7 @@
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import torch
-from transformers import AutoModelForCausalLM, pipeline, BitsAndBytesConfig
+from unsloth import FastLanguageModel
 
 import warnings
 from tqdm import tqdm
@@ -46,16 +46,11 @@ warnings.filterwarnings("ignore")
             
 def main():
     logging.info('Preparing input embeddings (this takes time)...')
-    
-    bnb_config = BitsAndBytesConfig(
-        load_in_8bit=True
-    )
 
-    llama = AutoModelForCausalLM.from_pretrained(
+    llama, _ = FastLanguageModel.from_pretrained(
         finetuned_model_dir,
-        low_cpu_mem_usage=True,
-        torch_dtype=torch.float16,
-        quantization_config=bnb_config,
+        dtype=torch.bfloat16,
+        load_in_4bit=False,
         device_map={"":0}
     )
 
@@ -63,7 +58,7 @@ def main():
     train_dict, val_dict = {}, {}
     train_set = LenaDataset(type='train')
     val_set = LenaDataset(type='validation')
-    batch_size = 24
+    batch_size = 32
 
     train_loader = DataLoader(train_set, batch_size=batch_size, collate_fn=collate_fn, shuffle=False, num_workers=4, prefetch_factor=4)
     val_loader = DataLoader(val_set, batch_size=batch_size, collate_fn=collate_fn, shuffle=False, num_workers=4, prefetch_factor=4)
@@ -71,8 +66,8 @@ def main():
     
     def run_llama(input_ids, attention_mask):
         with torch.inference_mode():
-            raw_embeddings = llama(input_ids, attention_mask=attention_mask, output_hidden_states=True, return_dict=True).hidden_states[-1]
-            raw_embeddings = raw_embeddings.to(torch.float16)
+            raw_embeddings = llama(input_ids, attention_mask=attention_mask, return_dict=True).last_hidden_state
+            # raw_embeddings = raw_embeddings.to(torch.float16)
             masked_embeddings = raw_embeddings * attention_mask.unsqueeze(-1)
             sum_embeddings = masked_embeddings.sum(dim=1)
             count_non_padding = attention_mask.sum(dim=1).unsqueeze(-1)
