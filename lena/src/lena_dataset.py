@@ -14,8 +14,8 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
-
-llama = "lena/checkpoints/llama"
+size = "3B"
+llama = f"lena/checkpoints/{size}/llama"
 tokenizer = AutoTokenizer.from_pretrained(llama, use_fast=True)
 
 class LenaDataset(Dataset):
