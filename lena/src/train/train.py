@@ -111,7 +111,7 @@ def main():
         for i , (view1, view2) in enumerate(dataloader):
             optimizer.zero_grad()
 
-            with autocast(device_type='cuda'):
+            with autocast(device_type='cuda', dtype=torch.bfloat16, enabled=True):
                 z1 = model(view1.to(device))
                 z2 = model(view2.to(device))
 
