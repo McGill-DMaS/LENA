@@ -4,7 +4,7 @@ from tqdm import tqdm
 import numpy as np
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
-from transformers import AutoTokenizer
+from unsloth import FastLanguageModel
 
 from .config_loader import config
 from .data_utils.db_models import *
@@ -14,9 +14,9 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
-size = "3B"
-llama = f"lena/checkpoints/{size}/llama"
-tokenizer = AutoTokenizer.from_pretrained(llama, use_fast=True)
+
+llama = f"lena/checkpoints/{config['lena']['size']}/llama"
+_, tokenizer = FastLanguageModel.from_pretrained(model_name=llama, dtype=torch.bfloat16, dtype=torch.bfloat16)
 
 class LenaDataset(Dataset):
     def __init__(self, type='train'):
